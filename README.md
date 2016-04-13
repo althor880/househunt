@@ -61,6 +61,9 @@ SqFt: None
 Lot Size: None
 Parking Spaces: None
 Parking Type: None
+>>> h2 = House(street_address="1600 Pennsylvania Ave.", city="Washington D.C.", state="Washington D.C.", zip_code="20006")
+>>> print h2
+1600 Pennsylvania Ave. Washington D.C., Washington D.C. 20006
 ```
 
 ### Listing
@@ -97,5 +100,41 @@ Class that describes a real estate listing and its details.
 #### Example Usage
 
 ```
+>>> from house import House, Listing
+>>> h = House(street_address="42 Wallaby Way", city="Sydney", state="Australia", zip="12345")
+>>> l = Listing(house=h, list_price=123456, days_on_market=5)
+>>> print l.detailed
+House Details:
+Address: 42 Wallaby Way Sydney, Australia 12345
+Home Type: None
+Beds: 3
+Baths: 1.5
+SqFt: None
+Lot Size: None
+Parking Spaces: None
+Parking Type: None
 
+Status: None
+List Price: 123455
+Zestimate: None
+MLS ID: None
+Days on Market: 5
+Original Price: None
+>>> l.get_zestimate()
+House Details:
+Address: 42 Wallaby Way Sydney, Australia 12345
+Home Type: None
+Beds: 3
+Baths: 1.5
+SqFt: None
+Lot Size: None
+Parking Spaces: None
+Parking Type: None
+
+Status: None
+List Price: 123455
+Zestimate: 554321
+MLS ID: None
+Days on Market: 5
+Original Price: None
 ```
