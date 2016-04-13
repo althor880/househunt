@@ -1,17 +1,17 @@
 # house.py
 Python module to search Redfin and combine with results from the Zillow API
 
-# Pre-Requisites
+## Pre-Requisites
 
 There must be a file named 'ZWSID' in the working directory, which contains on the first line your Zillow API ID
 
-# Classes in house.py
+## Classes in house.py
 
-## House
+### House
 
 Class that describes a house and its physical details:
 
-### Properties:
+#### Properties:
 
 - street_address
 - city
@@ -25,7 +25,7 @@ Class that describes a house and its physical details:
 - lot_size
 - home_type
 
-### Methods
+#### Methods
 - detailed():
   - Returns a formatted string containing more details than the basic string representation
 - to_dict():
@@ -34,7 +34,7 @@ Class that describes a house and its physical details:
   - Takes a dictionary as an argument and builds a House object using the key/values. The dictionary must contain a value for each of the classes properties (e.x. dictionary['street_address'] = "42 Wallaby Way") (useful for loading house objects from a .json file)
 
 
-### Example Usage
+#### Example Usage
 ```
 >>> from house import House
 >>> h = House()
