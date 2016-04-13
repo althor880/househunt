@@ -5,3 +5,4 @@ ZWSID
 *.json
 MANIFEST
 dist
+househunt.egg-info
