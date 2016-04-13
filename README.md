@@ -6,7 +6,7 @@ Python module to search Redfin and combine with results from the Zillow API
 
 There must be a file named 'ZWSID' in the working directory, which contains on the first line your Zillow API ID
 
-## Classes in house.py
+## Classes in househunt
 
 ### House
 
@@ -40,7 +40,7 @@ Class that describes a house and its physical details.
 #### Example Usage
 
 ```
->>> from house import House
+>>> from househunt import House
 >>> h = House()
 >>> print h
 None None, None None
@@ -100,7 +100,7 @@ Class that describes a real estate listing and its details.
 #### Example Usage
 
 ```
->>> from house import House, Listing
+>>> from househunt import House, Listing
 >>> h = House(street_address="42 Wallaby Way", city="Sydney", state="Australia", zip="12345")
 >>> l = Listing(house=h, list_price=123456, days_on_market=5)
 >>> print l.detailed
