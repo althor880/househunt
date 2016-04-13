@@ -1,4 +1,4 @@
-# house
+# house.py
 Python module to search Redfin and combine with results from the Zillow API
 
 # Pre-Requisites
