@@ -121,6 +121,7 @@ MLS ID: None
 Days on Market: 5
 Original Price: None
 >>> l.get_zestimate()
+>>> print l.detailed
 House Details:
 Address: 42 Wallaby Way Sydney, Australia 12345
 Home Type: None
