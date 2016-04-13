@@ -26,10 +26,11 @@ Class that describes a house and its physical details:
 ## Methods
 - detailed():
   - Returns a formatted string containing more details than the basic string representation
-- from_dict(dictionary):
-  - Takes a dictionary as an argument and builds a House object using the key/values. The dictionary must contain a value for each of the classes properties (e.x. dictionary['street_address'] = "42 Wallaby Way")
 - to_dict():
   - returns a dictionary containing all the properties of the house object. Formatted so as to be useable with the .from_dict(dictionary) method. (useful for serializing the object in a .json file)
+- from_dict(dictionary):
+  - Takes a dictionary as an argument and builds a House object using the key/values. The dictionary must contain a value for each of the classes properties (e.x. dictionary['street_address'] = "42 Wallaby Way") (useful for loading house objects from a .json file)
+
 
 ## Example Usage
 
