@@ -14,6 +14,8 @@ from tinydb import TinyDB, Query
 
 from datetime import datetime, timedelta
 
+from fake_useragent import UserAgent
+
 class House(object):
     """
     House class
@@ -99,6 +101,10 @@ class House(object):
 
     @beds.setter
     def beds(self, beds):
+        if is_float(beds):
+            beds = float(beds)
+        elif is_int(beds):
+            beds = int(beds)
         self._beds = beds
 
     @property
@@ -107,6 +113,10 @@ class House(object):
 
     @baths.setter
     def baths(self, baths):
+        if is_float(baths):
+            baths = float(baths)
+        elif is_int(baths):
+            baths = int(baths)
         self._baths = baths
 
     @property
@@ -115,6 +125,10 @@ class House(object):
 
     @sq_ft.setter
     def sq_ft(self, sq_ft):
+        if is_float(sq_ft):
+            sq_ft = float(sq_ft)
+        elif is_int(sq_ft):
+            sq_ft = int(sq_ft)
         self._sq_ft = sq_ft
 
     @property
@@ -123,6 +137,10 @@ class House(object):
 
     @parking.setter
     def parking(self, parking):
+        if is_float(parking):
+            parking = float(parking)
+        elif is_int(parking):
+            parking = int(parking)
         self._parking = parking
 
     @property
@@ -139,6 +157,10 @@ class House(object):
 
     @lot_size.setter
     def lot_size(self, lot_size):
+        if is_float(lot_size):
+            lot_size = float(lot_size)
+        elif is_int(lot_size):
+            lot_size = int(lot_size)
         self._lot_size = lot_size
 
     @property
@@ -190,6 +212,20 @@ class House(object):
         }
         return d
 
+    def matches_search(
+        self,
+        beds=None,
+        baths=None,
+        sq_ft=None,
+        parking=None,
+        lot_size=None
+    ):
+        if ((beds is None) or (self.beds >= beds)) and ((baths is None) or (self.baths >= baths)) and ((sq_ft is None) or (self.sq_ft >= sq_ft)) and ((parking is None) or (self.parking >= parking)) and ((lot_size is None) or (self.lot_size >= lot_size)):
+            return True
+        else:
+            return False
+
+
 class Listing(object):
     """
     Listing class
@@ -223,7 +259,7 @@ class Listing(object):
 
     @property
     def detailed(self):
-        detail_string = "House Details:\n%s\nStatus: %s\nList Price: %s\nZestimate: %s\nMLS ID: %s\nDays on Market: %s\nOriginal Price: %s\n"
+        detail_string = "House Details:\n%s\nStatus: %s\nList Price: %s\nZestimate: %s\nMLS ID: %s\nDays on Market: %s\nOriginal Price: %s\nOpen House: %s - %s to %s\n\n"
         return detail_string % (
             self.house.detailed,
             self.status,
@@ -231,7 +267,10 @@ class Listing(object):
             self.zestimate,
             self.mls_id,
             self.days_on_market,
-            self.original_list_price
+            self.original_list_price,
+            self.open_house_date,
+            self.open_house_start_time,
+            self.open_house_end_time
         )
 
     @property
@@ -248,6 +287,10 @@ class Listing(object):
 
     @list_price.setter
     def list_price(self, list_price):
+        if is_float(list_price):
+            list_price = float(list_price)
+        elif is_int(list_price):
+            list_price = int(list_price)
         self._list_price = list_price
 
     @property
@@ -256,6 +299,10 @@ class Listing(object):
 
     @zestimate.setter
     def zestimate(self, zestimate):
+        if is_float(zestimate):
+            zestimate = float(zestimate)
+        elif is_int(zestimate):
+            zestimate = int(zestimaet)
         self._zestimate = zestimate
 
     @property
@@ -264,6 +311,10 @@ class Listing(object):
 
     @days_on_market.setter
     def days_on_market(self, days_on_market):
+        if is_float(days_on_market):
+            days_on_market = float(days_on_market)
+        elif is_int(days_on_market):
+            days_on_market = int(days_on_market)
         self._days_on_market = days_on_market
 
     @property
@@ -272,6 +323,10 @@ class Listing(object):
 
     @original_list_price.setter
     def original_list_price(self, original_list_price):
+        if is_float(original_list_price):
+            original_list_price = float(original_list_price)
+        elif is_int(original_list_price):
+            original_list_price = int(original_list_price)
         self._original_list_price = original_list_price
 
     @property
@@ -364,6 +419,25 @@ class Listing(object):
             self.zestimate = z_api.get_zestimate(z_list)
             lc.insert_listing(self)
 
+    def matches_search(
+        self,
+        house=None,
+        list_price=None,
+        zestimate=None,
+        days_on_market=None,
+        status=None
+    ):
+        if ((list_price is None) or (self.list_price <= list_price)) and ((zestimate is None) or (self.zestimate <= zestimate)) and ((days_on_market is None) or (self.days_on_market <= days_on_market)):
+            if status:
+                if (status is None) or (self.status == status):
+                    return True
+                else:
+                    return False
+            else:
+                return True
+        else:
+            return False
+
 
 class ListCache(object):
 
@@ -422,13 +496,30 @@ class ZillAPI(object):
     # Moved ZWSID to an external file to avoid committing to source control. Should be placed in file named 'ZWSID' with the value on the first line
     ZWSID = ''
 
-    def __init__(self):
-        ZillAPI.load_zwsid()
+    def __init__(self, zwsid=None, zwsid_filename=None, save_zwsid=False):
+        if zwsid:
+            ZillAPI.set_zwsid(zwsid)
+            if save_zwsid and zwsid_filename:
+                ZillAPI.save_zwsid(zwsid, zwsid_filename)
+            elif save_zwsid and (zwsid_filename is None):
+                raise ValueError("Must provide a zwsid_filename if save_zwsid is True!")
+        elif zwsid_filename:
+            ZillAPI.load_zwsid(zwsid_filename=zwsid_filename)
+        else:
+            ZillAPI.load_zwsid()
 
     @classmethod
     def load_zwsid(cls, zwsid_filename='ZWSID'):
         with open(os.path.join(os.path.join(os.getcwd(), os.path.dirname(__file__)), zwsid_filename), 'r') as f:
             cls.ZWSID = f.readline().rstrip()
+
+    @classmethod
+    def set_zwsid(cls, zwsid):
+        cls.ZWSID = zwsid
+
+    @classmethod
+    def save_zwsid(cls, zwsid, zwsid_filename):
+        pass
 
 
     def get_from_zillow(self, h):
@@ -534,8 +625,13 @@ class RFAPI(object):
             self.build_dl_urls()
 
     def retrieve_dls(self):
+        ua = UserAgent()
+        ua.update
+        user_agent = ua.random
+        headers = { 'User-Agent' : user_agent }
         for dl_url in self.dl_urls:
-            browse = urllib2.urlopen(dl_url)
+            req = urllib2.Request(dl_url, headers=headers)
+            browse = urllib2.urlopen(req)
             csv_str = browse.read()
             csv_f = StringIO.StringIO(csv_str)
             reader = csv.reader(csv_f, delimiter=',')
@@ -583,11 +679,27 @@ class RFAPI(object):
         for listing in self.listings:
             listing.get_zestimate()
 
+def is_int(i):
+    try:
+        int(i)
+        return True
+    except (TypeError, ValueError):
+        return False
+
+def is_float(f):
+    try:
+        float(f)
+        return True
+    except (TypeError, ValueError):
+        return False
 
 if __name__ == '__main__':
-    rf_api = RFAPI(region_ids=[9614], load_listings=True, get_zestimates=True)
+    rf_api = RFAPI(region_ids=[9614,20294,10229], load_listings=True, get_zestimates=False)
     # rf_api = RFAPI([9614,20294,10229], load_listings=True)
     for listing in rf_api.listings:
-        print listing.detailed
-
+        if listing.house.matches_search(beds=2, baths=1.5, sq_ft=900):
+            if listing.matches_search(list_price=500000):
+                listing.get_zestimate()
+                if listing.matches_search(list_price=360000, zestimate=360000):
+                    print listing.detailed
 
