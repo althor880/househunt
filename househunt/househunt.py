@@ -628,8 +628,8 @@ class RFAPI(object):
         ua = UserAgent()
         ua.update
         user_agent = ua.random
-        headers = { 'User-Agent' : user_agent }
         for dl_url in self.dl_urls:
+            headers = { 'User-Agent': user_agent }
             req = urllib2.Request(dl_url, headers=headers)
             browse = urllib2.urlopen(req)
             csv_str = browse.read()
@@ -693,9 +693,8 @@ def is_float(f):
     except (TypeError, ValueError):
         return False
 
-if __name__ == '__main__':
+def main():
     rf_api = RFAPI(region_ids=[9614,20294,10229], load_listings=True, get_zestimates=False)
-    # rf_api = RFAPI([9614,20294,10229], load_listings=True)
     for listing in rf_api.listings:
         if listing.house.matches_search(beds=2, baths=1.5, sq_ft=900):
             if listing.matches_search(list_price=500000):
@@ -703,3 +702,6 @@ if __name__ == '__main__':
                 if listing.matches_search(list_price=360000, zestimate=360000):
                     print listing.detailed
 
+
+if __name__ == '__main__':
+    main()
