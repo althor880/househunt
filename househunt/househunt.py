@@ -438,6 +438,30 @@ class Listing(object):
         else:
             return False
 
+    def as_html(self):
+        html_string = "<tr>"
+        for key in self.as_dict():
+            if key == 'house':
+                h = House.from_dict(self.as_dict()[key])
+                for key2 in h.as_dict():
+                    html_string += "<td>%s</td>" % (h.as_dict()[key2])
+            else:
+                html_string += "<td>%s</td>" % (self.as_dict()[key])
+        html_string += "</tr>"
+        return html_string
+
+    def html_headers(self):
+        html_string = "<tr>"
+        for key in self.as_dict():
+            if key == 'house':
+                h = House.from_dict(self.as_dict()[key])
+                for key2 in h.as_dict():
+                    html_string += "<th>%s</th>" % (key2)
+            else:
+                html_string += "<th>%s</th>" % (key)
+        html_string += "</tr>"
+        return html_string
+
 
 class ListCache(object):
 
@@ -679,6 +703,8 @@ class RFAPI(object):
         for listing in self.listings:
             listing.get_zestimate()
 
+
+
 def is_int(i):
     try:
         int(i)
@@ -693,15 +719,19 @@ def is_float(f):
     except (TypeError, ValueError):
         return False
 
+def email_matches(matches):
+    pass
+
 def main():
+    matches = []
     rf_api = RFAPI(region_ids=[9614,20294,10229], load_listings=True, get_zestimates=False)
     for listing in rf_api.listings:
-        if listing.house.matches_search(beds=2, baths=1.5, sq_ft=900):
+        if listing.house.matches_search(beds=2, baths=1.0, sq_ft=900):
             if listing.matches_search(list_price=500000):
                 listing.get_zestimate()
                 if listing.matches_search(list_price=360000, zestimate=360000):
-                    print listing.detailed
-
+                    matches.append(listing)
+    email_matches(matches)
 
 if __name__ == '__main__':
     main()
